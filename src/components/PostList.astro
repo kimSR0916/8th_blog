@@ -1,0 +1,32 @@
+---
+import { formatDate, getAuthors, postUrl, tagUrl, type Post } from '../lib/blog';
+
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+const items = await Promise.all(posts.map(async (post) => ({ post, authors: await getAuthors(post) })));
+---
+
+{items.length === 0 ? (
+  <p class="empty">아직 글이 없습니다.</p>
+) : (
+  <ol class="post-list">
+    {items.map(({ post, authors }) => (
+      <li>
+        <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date)}</time>
+        <article>
+          <h2>
+            <a href={postUrl(post)}>{post.data.title}</a>
+            {post.data.draft && <span class="draft">초안</span>}
+          </h2>
+          <p class="desc">{post.data.description}</p>
+          <p class="meta">
+            <span>{authors.map((a) => a.data.name).join(', ')}</span>
+            {post.data.tags.map((tag) => <a class="tag" href={tagUrl(tag)}>{tag}</a>)}
+          </p>
+        </article>
+      </li>
+    ))}
+  </ol>
+)}

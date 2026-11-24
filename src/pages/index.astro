@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts, getTags, tagUrl } from '../lib/blog';
+import { SITE } from '../site';
+
+const posts = await getPosts();
+const tags = getTags(posts).slice(0, 12);
+---
+
+<Base>
+  <section class="intro">
+    <h1>{SITE.tagline}</h1>
+    <p>{SITE.description}</p>
+    {tags.length > 0 && (
+      <ul class="tag-row" aria-label="주요 태그">
+        {tags.map(({ tag }) => <li><a class="tag" href={tagUrl(tag)}>{tag}</a></li>)}
+      </ul>
+    )}
+  </section>
+  <PostList posts={posts} />
+</Base>

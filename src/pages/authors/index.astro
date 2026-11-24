@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { authorUrl, getPosts } from '../../lib/blog';
+
+const posts = await getPosts();
+const authors = (await getCollection('authors'))
+  .map((author) => ({
+    author,
+    count: posts.filter((p) => p.data.authors.some((ref) => ref.id === author.id)).length,
+  }))
+  .sort((a, b) => a.author.data.name.localeCompare(b.author.data.name, 'ko'));
+---
+
+<Base title="글쓴이">
+  <h1 class="page-title">글쓴이</h1>
+  <ul class="index-list">
+    {authors.map(({ author, count }) => (
+      <li>
+        <a href={authorUrl(author)}>{author.data.name}</a>
+        {author.data.role && <span>{author.data.role}</span>}
+        <span>글 {count}개</span>
+      </li>
+    ))}
+  </ul>
+</Base>

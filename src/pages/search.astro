@@ -1,0 +1,90 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/blog';
+---
+
+<Base title="검색" noindex>
+  <h1 class="page-title">검색</h1>
+  <form class="search" role="search" data-pagefind={url('pagefind/pagefind.js')}>
+    <label for="q">찾을 단어</label>
+    <input id="q" name="q" type="search" autocomplete="off" />
+  </form>
+  <p class="page-sub" id="status" role="status"></p>
+  <ol class="post-list search-results" id="results"></ol>
+</Base>
+
+<script>
+  interface Result {
+    url: string;
+    excerpt: string;
+    meta: { title: string };
+  }
+  interface Pagefind {
+    debouncedSearch(q: string): Promise<{ results: { data(): Promise<Result> }[] } | null>;
+  }
+
+  const form = document.querySelector<HTMLFormElement>('form.search')!;
+  const input = form.querySelector('input')!;
+  const status = document.getElementById('status')!;
+  const list = document.getElementById('results')!;
+  const LIMIT = 20;
+  let engine: Promise<Pagefind> | undefined;
+  let latest = 0;
+
+  async function search() {
+    const id = ++latest;
+    const q = input.value.trim();
+    const address = new URL(location.href);
+    if (q) address.searchParams.set('q', q);
+    else address.searchParams.delete('q');
+    history.replaceState(null, '', address);
+
+    if (!q) {
+      list.replaceChildren();
+      status.textContent = '';
+      return;
+    }
+    try {
+      engine ??= import(/* @vite-ignore */ form.dataset.pagefind!) as Promise<Pagefind>;
+      const found = await (await engine).debouncedSearch(q);
+      if (!found || id !== latest) return;
+      const items = await Promise.all(found.results.slice(0, LIMIT).map((r) => r.data()));
+      if (id !== latest) return;
+      const total = found.results.length;
+      status.textContent = total
+        ? `글 ${total}개를 찾았습니다.${total > LIMIT ? ` 앞의 ${LIMIT}개를 보여 줍니다.` : ''}`
+        : `'${q}'에 맞는 글이 없습니다.`;
+      list.replaceChildren(
+        ...items.map((item) => {
+          const li = document.createElement('li');
+          const h2 = document.createElement('h2');
+          const a = document.createElement('a');
+          a.href = item.url;
+          a.textContent = item.meta.title;
+          h2.append(a);
+          const p = document.createElement('p');
+          p.className = 'desc';
+          p.innerHTML = item.excerpt; // Pagefind가 이스케이프하고 <mark>만 넣은 문자열입니다.
+          li.append(h2, p);
+          return li;
+        }),
+      );
+    } catch {
+      engine = undefined;
+      if (id !== latest) return;
+      list.replaceChildren();
+      status.textContent = import.meta.env.DEV
+        ? '개발 서버에는 검색 색인이 없습니다. npm run build 후 npm run preview로 확인하세요.'
+        : '검색을 불러오지 못했습니다. 새로 고침한 뒤 다시 시도해 주세요.';
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    search();
+  });
+  input.addEventListener('input', search);
+  input.value = new URLSearchParams(location.search).get('q') ?? '';
+  if (input.value) search();
+  else input.focus();
+</script>

@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts, getTags, tagUrl } from '../../lib/blog';
+
+const tags = getTags(await getPosts());
+---
+
+<Base title="태그">
+  <h1 class="page-title">태그</h1>
+  {tags.length === 0 && <p class="empty">아직 태그가 없습니다.</p>}
+  <ul class="index-list">
+    {tags.map(({ tag, count }) => <li><a href={tagUrl(tag)}>{tag}</a><span>글 {count}개</span></li>)}
+  </ul>
+</Base>
