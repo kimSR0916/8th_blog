@@ -72,6 +72,7 @@ const isActive = (match: string[]) => match.some((m) => (m ? current.startsWith(
           {nav.map(({ label, path, match }) => (
             <a href={url(path)} aria-current={isActive(match) ? 'page' : undefined}>{label}</a>
           ))}
+          <a href={url('admin/index.html')}>글쓰기</a>
         </nav>
         <button class="theme-toggle" type="button" aria-label="어두운 화면" aria-pressed="false">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -88,7 +89,7 @@ const isActive = (match: string[]) => match.some((m) => (m ? current.startsWith(
         <p>
           <a href={url('about/')}>소개</a>
           <a href={url('rss.xml')}>RSS</a>
-          <a href={SITE.repo}>GitHub</a>
+          {SITE.repos.map((repo) => <a href={repo.url}>{repo.label}</a>)}
         </p>
       </div>
     </footer>

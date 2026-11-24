@@ -18,11 +18,13 @@ npm run dev
 | `npm run build` | 타입 검사, 빌드, 검색 색인 생성 |
 | `npm run preview` | 빌드 결과 확인 |
 
-글 쓰는 방법은 [글쓰기 가이드](src/content/posts/how-to-write/index.md)에 있습니다.
+글은 블로그의 **글쓰기**(`/admin/`)에서 웹으로 씁니다. 자세한 방법은 [글쓰기 가이드](src/content/posts/how-to-write/index.md)에 있습니다.
 
 ## 구조
 
-- `src/site.ts`: 블로그 이름, 소개 문구, 배포 주소
+- `src/site.ts`: 블로그 이름, 소개 문구, 배포 주소, 팀 저장소 링크
+- `public/admin/config.yml`: 웹 편집기(Sveltia CMS) 설정
+- `auth/`: 글쓰기용 GitHub 로그인 서버(Cloudflare Worker)
 - `src/content/posts/`: 글
 - `src/content/authors/`: 글쓴이
 - `src/content.config.ts`: 글과 글쓴이의 필수 항목
@@ -32,4 +34,4 @@ npm run dev
 
 `main`에 push하면 `.github/workflows/blog.yml`이 빌드하고 배포합니다. 처음 한 번은 저장소의 **Settings > Pages > Build and deployment > Source**를 **GitHub Actions**로 바꿔야 합니다.
 
-커스텀 도메인을 쓰려면 `src/site.ts`의 `origin`을 그 도메인으로, `base`를 `/`로 바꾸고 같은 Pages 설정 화면에 도메인을 등록합니다.
+커스텀 도메인을 쓰려면 `src/site.ts`의 `origin`을 그 도메인으로, `base`를 `/`로 바꾸고 `public/admin/config.yml`의 주소도 고친 뒤 같은 Pages 설정 화면에 도메인을 등록합니다.

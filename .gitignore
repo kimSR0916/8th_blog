@@ -1,7 +1,10 @@
 node_modules/
 dist/
 .astro/
+public/admin/sveltia-cms.js
 .env
+.dev.vars
+.wrangler/
 .env.*
 !.env.example
 .DS_Store

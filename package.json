@@ -7,9 +7,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "node scripts/copy-cms.mjs && astro dev",
     "check": "astro check",
-    "build": "astro check && astro build && pagefind --site dist",
+    "build": "node scripts/copy-cms.mjs && astro check && astro build && pagefind --site dist",
     "preview": "astro preview",
     "new": "node scripts/new-post.mjs"
   },
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@sveltia/cms": "^0.271.2",
     "pagefind": "^1.6.0",
     "typescript": "^6.0.3"
   }

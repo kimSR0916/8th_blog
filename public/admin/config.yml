@@ -1,0 +1,102 @@
+# 웹 편집기(Sveltia CMS) 설정. 항목은 src/content.config.ts와 맞춰야 합니다.
+backend:
+  name: github
+  repo: kimSR0916/8th_blog
+  branch: main
+  # GitHub 버튼 로그인을 쓰려면 OAuth 서버를 만든 뒤 base_url을 넣고 oauth를 추가하세요.
+  auth_methods: [token]
+  commit_messages:
+    create: '글 추가: {{slug}}'
+    update: '글 수정: {{slug}}'
+    delete: '글 삭제: {{slug}}'
+
+site_url: https://kimsr0916.github.io/8th_blog/
+display_url: https://kimsr0916.github.io/8th_blog/
+
+app_title: 8th Blog 글쓰기
+logo:
+  src: /8th_blog/favicon.svg
+
+media_folder: /public/images
+public_folder: /images
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: posts
+    label: 글
+    label_singular: 글
+    folder: src/content/posts
+    path: '{{slug}}/index'
+    # 이미지를 글과 같은 폴더에 저장합니다.
+    media_folder: ''
+    public_folder: ''
+    create: true
+    summary: '{{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    fields:
+      - { name: title, label: 제목 }
+      - name: description
+        label: 설명
+        widget: text
+        hint: 글 목록과 검색 결과에 보입니다. 200자까지 쓸 수 있습니다.
+        maxlength: 200
+      - name: date
+        label: 발행일
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: '{{now}}'
+      - name: updated
+        label: 수정일
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+        hint: 내용을 크게 고쳤을 때만 적습니다.
+      - name: authors
+        label: 글쓴이
+        widget: relation
+        collection: authors
+        value_field: '{{slug}}'
+        display_fields: [name]
+        search_fields: [name]
+        multiple: true
+        min: 1
+      - name: tags
+        label: 태그
+        widget: list
+        required: false
+        hint: 한 칸에 하나씩 적습니다. 빈칸 대신 하이픈(-)을 쓰세요.
+        default: []
+        field:
+          name: tag
+          label: 태그
+          pattern: ['^[0-9A-Za-z가-힣.+-]+$', '글자, 숫자, 점(.), 더하기(+), 하이픈(-)만 쓸 수 있습니다.']
+      - name: draft
+        label: 초안 (켜 두면 블로그에 나오지 않습니다)
+        widget: boolean
+        default: true
+        required: false
+      - name: body
+        label: 본문
+        widget: richtext
+        editor_components: [code-block, image, table, hr]
+
+  - name: authors
+    label: 글쓴이
+    label_singular: 글쓴이
+    folder: src/content/authors
+    extension: json
+    format: json
+    create: true
+    identifier_field: name
+    summary: '{{name}}'
+    fields:
+      - { name: name, label: 이름 }
+      - { name: role, label: 역할, required: false }
+      - { name: bio, label: 한 줄 소개, required: false }
+      - { name: github, label: GitHub 아이디, required: false }

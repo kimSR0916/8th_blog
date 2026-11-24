@@ -9,6 +9,13 @@ export function url(path = ''): string {
 }
 
 export const postUrl = (post: Post) => url(`posts/${post.id}/`);
+
+/** 웹 편집기에서 이 글을 여는 주소. 로그인은 편집기가 요구합니다. */
+export function editUrl(post: Post): string {
+  const path = (post.filePath ?? '').replace(/^.*src\/content\/posts\//, '').replace(/\.md$/, '');
+  return url(`admin/index.html#/collections/posts/entries/${encodeURI(path)}`);
+}
+
 export const tagUrl = (tag: string) => url(`tags/${encodeURIComponent(tag)}/`);
 export const authorUrl = (author: Author) => url(`authors/${author.id}/`);
 

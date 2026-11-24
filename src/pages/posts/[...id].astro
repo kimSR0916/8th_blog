@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { authorUrl, formatDate, getAuthors, getPosts, postUrl, readingMinutes, tagUrl } from '../../lib/blog';
+import { authorUrl, editUrl, formatDate, getAuthors, getPosts, postUrl, readingMinutes, tagUrl } from '../../lib/blog';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -31,6 +31,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
           <time datetime={iso(date)}>{formatDate(date)}</time>
           {updated && <span>수정 <time datetime={iso(updated)}>{formatDate(updated)}</time></span>}
           <span>{readingMinutes(post.body)}분 분량</span>
+          <a href={editUrl(post)}>이 글 수정</a>
         </p>
       </header>
       <div class="prose"><Content /></div>

@@ -8,7 +8,14 @@ import { SITE } from '../site';
   <h1 class="page-title">소개</h1>
   <div class="prose">
     <p>{SITE.description}</p>
-    <p>글은 모두 <a href={SITE.repo}>GitHub 저장소</a>에서 관리합니다. 틀린 내용을 발견했다면 이슈나 PR로 알려 주세요.</p>
-    <p>새 글은 <a href={url('rss.xml')}>RSS</a>로 받아 볼 수 있습니다.</p>
+    <p>
+      KeepGo는 소셜미디어에 저장만 해 둔 가고 싶은 곳을 실제로 떠나는 일정으로 바꿔 주는 서비스입니다.
+      자세한 이야기는 <a href={url('posts/keepgo-intro/')}>KeepGo 소개 글</a>에 있습니다.
+    </p>
+    <h2>팀 저장소</h2>
+    <ul>
+      {SITE.repos.map((repo) => <li><a href={repo.url}>{repo.label}</a>: {repo.about}</li>)}
+    </ul>
+    <p>팀원은 <a href={url('authors/')}>글쓴이</a>에서, 새 글은 <a href={url('rss.xml')}>RSS</a>로 볼 수 있습니다.</p>
   </div>
 </Base>
